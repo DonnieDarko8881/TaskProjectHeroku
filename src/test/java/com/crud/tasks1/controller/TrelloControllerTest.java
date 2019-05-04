@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -30,6 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(TrelloController.class)
 public class TrelloControllerTest {
+    @Autowired
+    private Gson gson;
 
     @Autowired
     private MockMvc mockMvc;
@@ -40,7 +43,7 @@ public class TrelloControllerTest {
     @Test
     public void shouldFetchEmptyTrelloBoards() throws Exception{
         //Given
-        List<TrelloBoardDto> trelloBoards = new ArrayList<>();
+        List<TrelloBoardDto> trelloBoards = Collections.emptyList();
         when(trelloFacade.fetchTrelloBoards()).thenReturn(trelloBoards);
         //When&Then
         mockMvc.perform(get("/v1/trello/getTrelloBoards").contentType(MediaType.APPLICATION_JSON))
@@ -84,14 +87,11 @@ public class TrelloControllerTest {
                 "http://test.com");
         when(trelloFacade.createdCard(ArgumentMatchers.any(TrelloCardDto.class))).thenReturn(createdTrelloCardDto);
 
-        Gson gson = new Gson();
-        String jsonContent = gson.toJson(trelloCardDto);
-
         //When&Then
         mockMvc.perform(post("/v1/trello/createTrelloCard")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")
-                .content(jsonContent))
+                .content(gson.toJson(trelloCardDto)))
                 .andExpect(jsonPath("$.id",is("323")))
                 .andExpect(jsonPath("$.name",is("Test")))
                 .andExpect(jsonPath("$.shortUrl",is("http://test.com")));

@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +33,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TaskControllerTest {
 
     @Autowired
+    private Gson gson;
+
+    @Autowired
     private MockMvc mockMvc;
 
     @MockBean
@@ -43,7 +47,7 @@ public class TaskControllerTest {
     @Test
     public void fetchEmptyTasksList() throws Exception {
         //Given
-        List<TaskDto> taskDtos = new ArrayList<>();
+        List<TaskDto> taskDtos = Collections.emptyList();
         when(mapper.mapToTaskDtoList(service.getAllTasks())).thenReturn(taskDtos);
         //When&Then
         mockMvc.perform(get("/v1/task/getTasks").contentType(MediaType.APPLICATION_JSON))
@@ -91,16 +95,12 @@ public class TaskControllerTest {
     public void shouldDeleteTask() throws Exception {
         //Given
         TaskDto taskDto = new TaskDto(1L, "Test", "Test Content");
-
-        Gson gson = new Gson();
-        String jsonContent = gson.toJson(taskDto);
-
         //When&Then
         mockMvc.perform(delete("/v1/task/deleteTask")
                 .param("taskId", "1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")
-                .content(jsonContent))
+                .content(gson.toJson(taskDto)))
                 .andExpect(status().isOk());
         verify(service, times(1)).deleteTask(any());
     }
@@ -113,14 +113,11 @@ public class TaskControllerTest {
 
         when(mapper.mapToTaskDto(service.saveTask(mapper.mapToTask(taskDto)))).thenReturn(taskDtoUpdated);
 
-        Gson gson = new Gson();
-        String jsonContent = gson.toJson(taskDto);
-
         //When&Then
         mockMvc.perform(put("/v1/task/updateTask")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")
-                .content(jsonContent))
+                .content(gson.toJson(taskDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.title", is("Test update")))
@@ -132,14 +129,11 @@ public class TaskControllerTest {
         //Given
         TaskDto taskDto = new TaskDto(1L, "Test", "Test Content");
 
-        Gson gson = new Gson();
-        String jsonContent = gson.toJson(taskDto);
-
         //When&Then
         mockMvc.perform(post("/v1/task/createTask")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("UTF-8")
-                .content(jsonContent))
+                .content(gson.toJson(taskDto)))
                 .andExpect(status().isOk());
         verify(service, times(1)).saveTask(any());
     }
