@@ -10,10 +10,10 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
 @Service
-public class SimpleEmailService {
+public class SimpleMailService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(SimpleMailMessage.class);
 
@@ -21,7 +21,7 @@ public class SimpleEmailService {
     private MailCreatorService mailCreatorService;
 
     @Autowired
-    public SimpleEmailService(JavaMailSender javaMailSender, MailCreatorService mailCreatorService) {
+    public SimpleMailService(JavaMailSender javaMailSender, MailCreatorService mailCreatorService) {
         this.javaMailSender = javaMailSender;
         this.mailCreatorService = mailCreatorService;
     }
@@ -29,8 +29,8 @@ public class SimpleEmailService {
     public void send(Mail mail) {
         LOGGER.info("Starting email preparation...");
         try {
-            SimpleMailMessage mailMessage = createEmailMessage(mail);
-            javaMailSender.send(mailMessage);
+           // SimpleMailMessage mailMessage = createMailMessage(mail);
+            javaMailSender.send(createMimeMessage(mail));
             LOGGER.info("Email has been sent.");
         } catch (MailException e) {
             LOGGER.error("Failed to process sending: " + e.getMessage(), e);
@@ -42,15 +42,15 @@ public class SimpleEmailService {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
             messageHelper.setTo(mail.getMailTo());
             messageHelper.setSubject(mail.getSubject());
-            messageHelper.setText(mailCreatorService.buildTrelloCardMail(mail.getMessage()),true);
+            messageHelper.setText(mailCreatorService.buildTrelloCardEmail(mail.getMessage()),true);
         };
     }
 
-    private SimpleMailMessage createEmailMessage(Mail mail) {
+    private SimpleMailMessage createMailMessage(Mail mail) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(mail.getMailTo());
         mailMessage.setSubject(mail.getSubject());
-        mailMessage.setText(mail.getMessage());
+        mailMessage.setText(mailCreatorService.buildTrelloCardEmail(mail.getMessage()));
         if(mail.getToCc()!=null){
             mailMessage.setCc(mail.getToCc());}
         return mailMessage;
