@@ -29,8 +29,17 @@ public class SimpleMailService {
     public void send(Mail mail) {
         LOGGER.info("Starting email preparation...");
         try {
-           // SimpleMailMessage mailMessage = createMailMessage(mail);
             javaMailSender.send(createMimeMessage(mail));
+            LOGGER.info("Email has been sent.");
+        } catch (MailException e) {
+            LOGGER.error("Failed to process sending: " + e.getMessage(), e);
+        }
+    }
+
+    public void sendSynchronMail(Mail mail) {
+        LOGGER.info("Starting email preparation...");
+        try {
+            javaMailSender.send(createScheduledMailMessage(mail));
             LOGGER.info("Email has been sent.");
         } catch (MailException e) {
             LOGGER.error("Failed to process sending: " + e.getMessage(), e);
@@ -46,13 +55,12 @@ public class SimpleMailService {
         };
     }
 
-    private SimpleMailMessage createMailMessage(Mail mail) {
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(mail.getMailTo());
-        mailMessage.setSubject(mail.getSubject());
-        mailMessage.setText(mailCreatorService.buildTrelloCardEmail(mail.getMessage()));
-        if(mail.getToCc()!=null){
-            mailMessage.setCc(mail.getToCc());}
-        return mailMessage;
+    private MimeMessagePreparator createScheduledMailMessage(final Mail mail) {
+        return mimeMessage -> {
+            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
+            messageHelper.setTo(mail.getMailTo());
+            messageHelper.setSubject(mail.getSubject());
+            messageHelper.setText(mailCreatorService.buildScheduledEmail(mail.getMessage()), true);
+        };
     }
 }

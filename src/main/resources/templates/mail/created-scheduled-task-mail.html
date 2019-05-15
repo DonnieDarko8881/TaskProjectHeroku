@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width"></meta>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
-    <title>Trello Card</title>
+    <title>Scheduled Mail Task</title>
     <style>
 
         @media only screen and (max-width: 620px) {
@@ -118,9 +118,9 @@
                                             </tbody>
                                         </table>
                                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">
-                                            Application functionality:
+                                            Task in databases:
                                         </p>
-                                        <ul th:each="function : ${application_functionality}">
+                                        <ul th:each="function : ${task_list}">
                                             <li th:text="${function}"></li>
                                         </ul>
                                         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;" th:text="${goodbye_message}"></p>
