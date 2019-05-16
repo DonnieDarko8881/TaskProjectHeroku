@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotEquals;
 public class TrelloMapperTestSuite {
 
     @InjectMocks
-    TrelloMapper trelloMapper;
+    private TrelloMapper trelloMapper;
 
     @Test
     public void testMapToBoards() {

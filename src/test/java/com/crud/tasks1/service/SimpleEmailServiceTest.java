@@ -6,9 +6,11 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.mail.SimpleMailMessage;
+import org.slf4j.Logger;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -16,27 +18,24 @@ import static org.mockito.Mockito.verify;
 public class SimpleEmailServiceTest {
 
     @InjectMocks
-    SimpleEmailService simpleEmailService;
+    SimpleMailService simpleEmailService;
 
     @Mock
     JavaMailSender javaMailSender;
+
+    @Mock
+    Logger logger;
 
     @Test
     public void shoudSendMail() {
         //Given
         Mail mail = new Mail("test@test.com","testCC@test.com", "Test", "Test");
-
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(mail.getMailTo());
-        mailMessage.setSubject(mail.getSubject());
-        mailMessage.setText(mail.getMessage());
-        mailMessage.setCc(mail.getToCc());
-
+        simpleEmailService.createMimeMessage(mail);
         //when
         simpleEmailService.send(mail);
 
         //Then
-        verify(javaMailSender,times(1)).send(mailMessage);
+        verify(javaMailSender,times(1)).send(any(MimeMessagePreparator.class));
 
     }
 }

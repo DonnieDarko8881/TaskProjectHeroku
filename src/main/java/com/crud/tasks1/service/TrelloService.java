@@ -22,11 +22,11 @@ public class TrelloService {
     private final static String SUBJECT = "Tasks: New Trello Card";
 
     private TrelloClient trelloClient;
-    private SimpleEmailService emailService;
+    private SimpleMailService emailService;
     private AdminConfig adminConfig;
 
     @Autowired
-    public TrelloService(TrelloClient trelloClient, SimpleEmailService emailService, AdminConfig adminConfig) {
+    public TrelloService(TrelloClient trelloClient, SimpleMailService emailService, AdminConfig adminConfig) {
         this.trelloClient = trelloClient;
         this.emailService = emailService;
         this.adminConfig = adminConfig;

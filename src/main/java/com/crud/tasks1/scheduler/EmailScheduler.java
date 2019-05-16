@@ -37,7 +37,7 @@ public class EmailScheduler {
     }
 
     private void messageDependingOnSizeOfRecords(long size, String pluralityOfTask) {
-        simpleEmailService.sendSynchronMail(new Mail(adminConfig.getAdminMail(), null, SUBJECT,
+        simpleEmailService.sendSynchronizedMail(new Mail(adminConfig.getAdminMail(), null, SUBJECT,
                 "Currently in database you got: " + size + pluralityOfTask));
     }
 }

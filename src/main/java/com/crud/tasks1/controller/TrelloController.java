@@ -22,12 +22,12 @@ public class TrelloController {
         this.trelloFacade = trelloFacade;
     }
 
-    @PostMapping(value = "createTrelloCard")
+    @PostMapping(value = "/cards")
     public CreatedTrelloCardDto createNewCard(@RequestBody TrelloCardDto trelloCardDto){
         return trelloFacade.createdCard(trelloCardDto);
     }
 
-    @GetMapping(value = "getTrelloBoards")
+    @GetMapping(value = "/boards")
     public List<TrelloBoardDto> getTrelloBoards() {
         return trelloFacade.fetchTrelloBoards();
     }

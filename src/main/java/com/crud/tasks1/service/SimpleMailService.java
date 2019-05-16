@@ -36,7 +36,7 @@ public class SimpleMailService {
         }
     }
 
-    public void sendSynchronMail(Mail mail) {
+    public void sendSynchronizedMail(Mail mail) {
         LOGGER.info("Starting email preparation...");
         try {
             javaMailSender.send(createScheduledMailMessage(mail));
@@ -46,7 +46,7 @@ public class SimpleMailService {
         }
     }
 
-    private MimeMessagePreparator createMimeMessage(final Mail mail){
+    public MimeMessagePreparator createMimeMessage(final Mail mail){
         return mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
             messageHelper.setTo(mail.getMailTo());
